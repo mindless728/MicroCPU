@@ -1,5 +1,5 @@
 #
-# Created by makemake (Sparc Jul 27 2005) on Wed May  4 12:53:51 2011
+# Created by makemake (Sparc Jul 27 2005) on Thu May  5 11:14:33 2011
 #
 
 #
@@ -61,7 +61,13 @@ OBJFILES =	 MicroInst.o globals.o
 # Main targets
 #
 
-all:	 MicroCPU 
+all:	 MicroCPU Memory.obj.o mMemory.obj.o
+
+Memory.obj.o: Memory.obj
+	cpp Memory.obj > Memory.obj.o
+
+mMemory.obj.o: mMemory.obj
+	cpp mMemory.obj > mMemory.obj.o
 
 MicroCPU:	MicroCPU.o $(OBJFILES)
 	$(CXX) $(CXXFLAGS) -o MicroCPU MicroCPU.o $(OBJFILES) $(CCLIBFLAGS)
@@ -70,8 +76,8 @@ MicroCPU:	MicroCPU.o $(OBJFILES)
 # Dependencies
 #
 
-MicroCPU.o:	 globals.h includes.h
-MicroInst.o:	
+MicroCPU.o:	 MicroInst.h globals.h includes.h
+MicroInst.o:	 MicroInst.h globals.h includes.h
 globals.o:	 MicroInst.h globals.h includes.h
 
 #
@@ -85,6 +91,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 
 clean:
 	-/bin/rm -r $(OBJFILES) MicroCPU.o ptrepository SunWS_cache .sb ii_files core 2> /dev/null
+	rm *~
 
 realclean:        clean
 	/bin/rm -rf  MicroCPU 

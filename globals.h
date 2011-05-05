@@ -19,13 +19,14 @@ public:
 };
 
 extern const uint32 BIT_SIZE;
-const uint32 NUMBER_MICRO_FUNCTIONS = 21;
+const uint32 NUMBER_MICRO_FUNCTIONS = 22;
 
 extern Counter pc;
 extern Counter ir;
 extern Counter imm;
 extern StorageObject zero;
-extern StorageObject twentyfour;
+extern StorageObject eight;
+extern StorageObject mask;
 extern RegisterFile r;
 extern RegisterFile amr;
 
@@ -36,6 +37,7 @@ extern Memory mem;
 
 extern Counter mpc;
 extern Counter mir;
+extern Counter maux;
 
 extern BusALU malu;
 extern Bus mabus;

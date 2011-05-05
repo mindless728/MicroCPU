@@ -24,6 +24,7 @@ string AM0_X_AM1(byte inst);          // AM0 <- AM1
 string IR_X_MEMread(byte inst);       // IR <- MEMread
 string IMM_X_MEMread(byte inst);      // imm <- MEMread
 string RReg_X_AM0(byte inst);         // R[Reg] <- AM0
+string halt(byte inst);               // halt
 
 byte getMicroFunction(byte inst);
 

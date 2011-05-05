@@ -294,6 +294,11 @@ string RReg_X_AM0(byte inst) {         // R[Reg] <- AM0
   return ss.str();
 }
 
+string halt(byte inst) {               // halt
+  throw 1;
+  return "halt";
+}
+
 byte getMicroFunction(byte inst) {
   if((inst & 0xC0) == 0xC0)
     return 0;
@@ -337,5 +342,7 @@ byte getMicroFunction(byte inst) {
     return 19;
   else if((inst & 0xF0) == 0x50)
     return 20;
+  else if(inst == 0x01)
+    return 21;
   return -1;
 }

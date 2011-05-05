@@ -33,7 +33,8 @@ Counter pc("PC",BIT_SIZE);
 Counter ir("IR",BIT_SIZE);
 Counter imm("IMM",8);
 StorageObject zero("ZERO",BIT_SIZE,0);
-StorageObject twentyfour("TWENTYFOUR",BIT_SIZE,24);
+StorageObject eight("EIGHT",BIT_SIZE,8);
+StorageObject mask("0xF0",BIT_SIZE,0xF0);
 RegisterFile r("R",BIT_SIZE,16);
 RegisterFile amr("AMR",BIT_SIZE,4);
 
@@ -44,6 +45,7 @@ Memory mem("MEM",BIT_SIZE/2,BIT_SIZE);
 
 Counter mpc("mPC",BIT_SIZE);
 Counter mir("mIR",BIT_SIZE);
+Counter maux("mAUX",BIT_SIZE);
 
 BusALU malu("mALU",BIT_SIZE);
 Bus mabus("mABUS",BIT_SIZE);
@@ -96,7 +98,10 @@ void makeConnections() {
   zero.connectsTo(alu.OP1());
 
   //twentyfour
-  twentyfour.connectsTo(malu.OP2());
+  eight.connectsTo(malu.OP2());
+
+  //0xF0
+  mask.connectsTo(malu.OP2());
 
   //mpc
   mpc.connectsTo(mmem.READ());
@@ -104,6 +109,10 @@ void makeConnections() {
 
   //mir
   mir.connectsTo(mmem.READ());
+
+  //maux
+  maux.connectsTo(malu.OP1());
+  maux.connectsTo(malu.OUT());
 
   //mmar
   mmem.MAR().connectsTo(mabus.OUT());
@@ -135,4 +144,5 @@ void setupMicroInstFunctions() {
   microInst[18] = IR_X_MEMread;
   microInst[19] = IMM_X_MEMread;
   microInst[20] = RReg_X_AM0;
+  microInst[21] = halt;
 }
