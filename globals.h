@@ -6,7 +6,7 @@
 typedef unsigned char byte;
 typedef unsigned int uint32;
 
-typedef void(*MicroInst)(byte);
+typedef string(*MicroInst)(byte);
 
 class RegisterFile {
 private:
@@ -19,12 +19,13 @@ public:
 };
 
 extern const uint32 BIT_SIZE;
-const uint32 NUMBER_MICRO_FUNCTIONS = 19;
+const uint32 NUMBER_MICRO_FUNCTIONS = 21;
 
 extern Counter pc;
 extern Counter ir;
 extern Counter imm;
 extern StorageObject zero;
+extern StorageObject twentyfour;
 extern RegisterFile r;
 extern RegisterFile amr;
 
@@ -32,6 +33,13 @@ extern BusALU alu;
 extern Bus abus;
 extern Bus dbus;
 extern Memory mem;
+
+extern Counter mpc;
+extern Counter mir;
+
+extern BusALU malu;
+extern Bus mabus;
+extern Memory mmem;
 
 extern MicroInst microInst[NUMBER_MICRO_FUNCTIONS];
 
