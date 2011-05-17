@@ -50,6 +50,7 @@ int main(int argc, char ** argv) {
             } else if((flags & 0x2) == 2) {
                 if(!(flags & 0x80))
                     writeback_strings = writeback();
+                    
 #ifdef DEBUG
                 for( int i = 0; i < 16; i += 4 ) {
                     cout << endl << r[i] << " " << r[i+1] << " " << r[i+2] << " " << r[i+3];
@@ -59,6 +60,7 @@ int main(int argc, char ** argv) {
                 trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
                 execute_strings.clear();
                 decode_strings.clear();
+                writeback_strings.clear();
                 gotoFetch();
             }
         }
@@ -109,9 +111,10 @@ string mExecute(byte ai) {
 
   if(flags & 0x80) { //processing a jump
     //get the left and right test values
-    uint32 left = amr[0].uvalue(),
-           right = (ir.uvalue() & 0x10000000?amr[1].uvalue():0);
+    int left = amr[0].value(),
+           right = (ir.uvalue() & 0x10000000?amr[1].value():0);
     bool value = false;
+    byte run = 0;
 
     //determine if the testing value is tue or not
     switch(inst[0]) {
@@ -141,10 +144,21 @@ string mExecute(byte ai) {
       break;
     }
 
+    //grab the correct micro instruction to run
+    if(ir.uvalue() & 0x10000000) {
+        if(value)
+            run = inst[1];
+        else
+            run = inst[2];
+    } else if(value) {
+        run = inst[2];
+    } else
+        str = "Branch Not Taken";
+
     //run microcode based on the truth value of comparison
-    if(inst[2-value]) {
-      func = getMicroFunction(inst[2-value]);
-      str += microInst[func](inst[2-value]);
+    if(run) {
+      func = getMicroFunction(run);
+      str += microInst[func](run);
     }
   } else if(flags & 0x04) { //processing a adress mode isntruction
     for(uint32 i = 0; i < 3; ++i) {
