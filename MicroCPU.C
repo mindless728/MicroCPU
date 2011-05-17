@@ -38,9 +38,6 @@ int main(int argc, char ** argv) {
   }
 }
 
-/**
- * starts a fetch in the CPU.
- */
 void gotoFetch() {
   mpc.clear();
   Clock::tick();
@@ -54,9 +51,6 @@ void gotoFetch() {
   Clock::tick();
 }
 
-/**
- * Performs a micro instruction fetch.
- */
 void mFetch() {
   mabus.IN().pullFrom(mpc);
   mmem.MAR().latchFrom(mabus.OUT());
@@ -68,11 +62,6 @@ void mFetch() {
   Clock::tick();
 }
 
-/**
- * Executes a micro instruction
- *
- * @param   ai  The instruction to execute.
- */
 void mExecute(byte ai) {
   string str = "";
   byte inst[3] = {0};
