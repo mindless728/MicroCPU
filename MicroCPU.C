@@ -1,7 +1,7 @@
 #include "includes.h"
 #include "MicroInst.h"
 
-#define DEBUG
+//#define DEBUG
 
 void gotoFetch();
 void mFetch();
