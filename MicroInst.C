@@ -21,7 +21,8 @@ string AMn_X_RReg_S_AMn(byte inst) {   // AMn <- R[Reg] + AMn
 
     // generate the trace output
     stringstream ss;
-    ss << "AM[" << ai << "] <- R[" << ri << "] + AM[" << ai << "]" << " (" << r[ri].value() << " + " << amr[ai].value() << ")";
+    //ss << "AM[" << ai << "] <- R[" << ri << "] + AM[" << ai << "]" << " (" << r[ri].value() << " + " << amr[ai].value() << ")";
+    ss << "AM" << ai << " <- " << r[ri] << " + " << amr[ai];
 
     // perform the micro-operation.
     alu.OP1().pullFrom(r[ri]);
@@ -48,7 +49,8 @@ string AMn_X_RReg(byte inst) {         // AMn <- R[Reg]
     uint32 ri = inst & 0xF;
     uint32 ai = (inst & 0x30) >> 4;
     stringstream ss;
-    ss << "AM[" << ai << "] <- R[" << ri << "]" << " (" << r[ri].value() << ")";
+    //ss << "AM[" << ai << "] <- R[" << ri << "]" << " (" << r[ri].value() << ")";
+    ss << "AM" << ai << " <- " << r[ri];
 
     dbus.IN().pullFrom(r[ri]);
     amr[ai].latchFrom(dbus.OUT());
@@ -75,7 +77,8 @@ string AM0_X_AM0_OP_AMn(byte inst) {   // AM0 <- AM0 OP AMn
 
 
     stringstream ss;
-    ss << "AM[0] <- AM[0] (" << amr[0].value() << ")";
+    //ss << "AM[0] <- AM[0] (" << amr[0].value() << ")";
+    ss << "AM0" << " <- " << amr[0];
 
     // load the ALU operands
     alu.OP1().pullFrom(amr[0]);
@@ -112,7 +115,8 @@ string AM0_X_AM0_OP_AMn(byte inst) {   // AM0 <- AM0 OP AMn
             ss << " >>a ";
             break;
     }
-    ss << "AM[" << ai <<"] (" << amr[ai].value() << ")";
+    //ss << "AM[" << ai <<"] (" << amr[ai].value() << ")";
+    ss << amr[ai];
 
     amr[0].latchFrom(alu.OUT());
 
@@ -135,7 +139,7 @@ string MAR_X_RReg(byte inst) {         // MAR <- R[Reg]
     uint32 ri = inst & 0xF;
     
     stringstream ss;
-    ss << "MAR <- R[" << ri << "]";
+    ss << "MAR <- R[" << ri << "] (" << r[ri].value() << ")";
 
     // send the data from the register to the MAR over the abus.
     abus.IN().pullFrom(r[ri]);
@@ -158,7 +162,8 @@ string MAR_X_RReg(byte inst) {         // MAR <- R[Reg]
 string AMn_X_AMt_S_AMn(byte inst) {    // AMn <- AMt + AMn
     uint32 ai = inst & 0x3;
     stringstream ss;
-    ss << "AM[" << ai << "] <- AM[3] + AM[" << ai << "]";
+    //ss << "AM[" << ai << "] <- AM[3] + AM[" << ai << "]";
+    ss << "AM" << ai << " <- " << amr[3] << " + " << amr[ai];
 
     alu.OP1().pullFrom(amr[ai]);
     alu.OP2().pullFrom(amr[3]);
@@ -187,7 +192,8 @@ string AMn_X_IMM_OP_AMn(byte inst) {   // AMn <- imm OP AMn
     alu.OP1().pullFrom(imm);
     alu.OP2().pullFrom(amr[ai]);
 
-    ss << "AM[" << ai << "] <- imm (" << imm.value() << ")";
+    //ss << "AM[" << ai << "] <- imm (" << imm.value() << ")";
+    ss << "AM" << ai << " <- " << imm;
 
     switch(op) {
         case 0:
@@ -199,7 +205,8 @@ string AMn_X_IMM_OP_AMn(byte inst) {   // AMn <- imm OP AMn
             ss << " - ";
             break;
     }
-    ss << "AM[" << ai << "] (" << amr[ai].value() << ")";
+    //ss << "AM[" << ai << "] (" << amr[ai].value() << ")";
+    ss << amr[ai];
 
     amr[ai].latchFrom(alu.OUT());
 
@@ -220,7 +227,8 @@ string AMn_X_IMM_OP_AMn(byte inst) {   // AMn <- imm OP AMn
 string AMn_X_AMn_D_IMM(byte inst) {    // AMn <- AMn - imm
     uint32 ai = inst & 0x3;
     stringstream ss;
-    ss << "AM[" << ai << "] <- AM[" << ai << "] (" << amr[ai].value() <<") - imm" << " (" << imm.value() << ")";
+    //ss << "AM[" << ai << "] <- AM[" << ai << "] (" << amr[ai].value() <<") - imm" << " (" << imm.value() << ")";
+    ss << "AM" << ai << " <- " << amr[ai] << " - " << imm;
 
     alu.OP1().pullFrom(amr[ai]);
     alu.OP2().pullFrom(imm);
@@ -244,7 +252,8 @@ string AMn_X_AMn_D_IMM(byte inst) {    // AMn <- AMn - imm
 string AMn_X_MEMread(byte inst) {      // AMn <- MEMread
     uint32 ai = inst & 0x3;
     stringstream ss;
-    ss << "AM[" << ai << "] <- MEMread";
+    //ss << "AM[" << ai << "] <- MEMread";
+    ss << "AM" << ai << " <- MEMread"; 
 
     mem.read();
     amr[ai].latchFrom(mem.READ());
@@ -266,7 +275,8 @@ string AMn_X_MEMread(byte inst) {      // AMn <- MEMread
 string MAR_X_AMn(byte inst) {          // MAR <- AMn
     uint32 ai = inst & 0x3;
     stringstream ss;
-    ss << "MAR <- AM[" << ai << "]" << " (" << amr[ai].value() << ")";
+    //ss << "MAR <- AM[" << ai << "]" << " (" << amr[ai].value() << ")";
+    ss << "MAR <- " << amr[ai];
 
     abus.IN().pullFrom(amr[ai]);
     mem.MAR().latchFrom(abus.OUT());
@@ -288,7 +298,8 @@ string MAR_X_AMn(byte inst) {          // MAR <- AMn
 string PC_X_AMn(byte inst) {           // PC <- AMn
     uint32 ai = inst & 0x3;
     stringstream ss;
-    ss << "PC <- AM[" << ai << "]" << "  (" << amr[ai].value() << ")";
+    //ss << "PC <- AM[" << ai << "]" << "  (" << amr[ai].value() << ")";
+    ss << "PC <- " << amr[ai];
 
     abus.IN().pullFrom(amr[ai]);
     pc.latchFrom(abus.OUT());
@@ -310,7 +321,8 @@ string PC_X_AMn(byte inst) {           // PC <- AMn
 string MEMwrite_X_AMn(byte inst) {     // MEMwrite <- AMn
     uint32 ai = inst & 0x3;
     stringstream ss;
-    ss << "MEMwrite <- AM[" << ai << "]";
+    //ss << "MEMwrite <- AM[" << ai << "]";
+    ss << "MEMwrite <- " << amr[ai];
 
     mem.WRITE().pullFrom(amr[ai]);
     mem.write();
@@ -331,7 +343,8 @@ string MEMwrite_X_AMn(byte inst) {     // MEMwrite <- AMn
 string R15_X_R15_OP_1(byte inst) {     // R15 <- R15 OP 1
     uint32 op = inst & 0x1;
     stringstream ss;
-    ss << "R[15] <- R[15]";
+    //ss << "R[15] <- R[15]";
+    ss << "R15 <- " << r[15];
 
     switch(op) {
         case 0:
@@ -374,7 +387,7 @@ string MAR_X_MEMread(byte inst) {      // MAR <- MEMread
  */
 string PC_X_PC_S_1(byte inst) {        // PC <- PC + 1
     stringstream ss;
-    ss << "PC <- PC +1";
+    ss << "PC <- " << pc << " + 1";
 
     pc.incr();
 
@@ -391,7 +404,7 @@ string PC_X_PC_S_1(byte inst) {        // PC <- PC + 1
  */
 string MAR_X_PC(byte inst) {           // MAR <- PC
     stringstream ss;
-    ss << "MAR <- PC";
+    ss << "MAR <- " << pc;
 
     abus.IN().pullFrom(pc);
     mem.MAR().latchFrom(abus.OUT());
@@ -409,7 +422,7 @@ string MAR_X_PC(byte inst) {           // MAR <- PC
  */
 string AM0_X_N_AM0(byte inst) {        // AM0 <- -AM0
     stringstream ss;
-    ss << "AM[0] <- -AM[0]";
+    ss << "AM0 <- -" << amr[0];
 
     alu.OP1().pullFrom(zero);
     alu.OP2().pullFrom(amr[0]);
@@ -430,7 +443,7 @@ string AM0_X_N_AM0(byte inst) {        // AM0 <- -AM0
  */
 string AM0_X_C_AM0(byte inst) {        // AM0 <- ~AM0
     stringstream ss;
-    ss << "AM[0] <- ~AM[0]";
+    ss << "AM0 <- ~" << amr[0]; 
 
     alu.OP1().pullFrom(amr[0]);
     alu.perform(BusALU::op_not);
@@ -449,7 +462,7 @@ string AM0_X_C_AM0(byte inst) {        // AM0 <- ~AM0
  */
 string AM0_X_AM1(byte inst) {          // AM0 <- AM1
     stringstream ss;
-    ss << "AM[0] <- AM[1]";
+    ss << "AM0 <- " << amr[1];
 
     dbus.IN().pullFrom(amr[1]);
     amr[0].latchFrom(dbus.OUT());
@@ -508,7 +521,8 @@ string RReg_X_AM0(byte inst) {         // R[Reg] <- AM0
     uint32 ri = inst & 0xF;
 
     stringstream ss;
-    ss << "R[" << ri << "] <- AM[0] (" << amr[0].value() << ")";
+    //ss << "R[" << ri << "] <- AM[0] (" << amr[0].value() << ")";
+    ss << "R" << ri << " <- " << amr[0];
 
     // send the desired data from am[0] to reg[ri] over the data bus.
     dbus.IN().pullFrom(amr[0]);

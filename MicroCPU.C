@@ -28,6 +28,8 @@ int main(int argc, char ** argv) {
         mmem.load("mMemory.obj.o");
         mem.load(argv[1]);
 
+        pc.latchFrom( mem.READ() );
+        
         list<string> fetch_strings;
         list<string> decode_strings;
         list<string> execute_strings;
@@ -186,6 +188,7 @@ void decode() {
 list<string> writeback() {
     uint32 inst = ir.uvalue() >> 24;
     uint32 amdst = (ir.uvalue() & 0x00FF0000) >> 16;
+    uint32 ri = amdst & 0xF;
     list<string> trace;
     if( ( inst & 0xE0 ) == 0 || inst == 0x40 || inst == 0x42 ) {
         // math instruction, mov instruction, pop instr: 
@@ -198,12 +201,12 @@ list<string> writeback() {
         if( (amdst & 0xF0) == 0x80 ) {
             trace.push_back( RReg_X_AM0( amdst & 0xF ) );
             stringstream ss;
-            ss << "  (R[" << (amdst & 0xF) << "] <- " << amr[0].uvalue() << ")";
+            ss << " (R" << ri << " <- " << amr[0] << ")";
             trace.push_back( ss.str() );
         } else {    // otherwise we writeback to memory
             trace.push_back( MEMwrite_X_AMn(0) ); 
             stringstream ss;
-            ss << "  (MEM[" << mem.MAR().uvalue() << "] <- " << amr[0].uvalue() << ")";
+            ss << "  (MEM[" << mem.MAR().uvalue() << "] <- " << amr[0] << ")";
             trace.push_back( ss.str() );
         }
     } 

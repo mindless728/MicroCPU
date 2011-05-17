@@ -57,7 +57,7 @@ StorageObject mask("0xF0",BIT_SIZE,0xF0);
 
 // The register files
 RegisterFile r("R",BIT_SIZE,16); // GPR registers
-RegisterFile amr("AMR",BIT_SIZE,4); // AM temporary registers
+RegisterFile amr("AM",BIT_SIZE,4); // AM temporary registers
 
 
 // bus objects
@@ -84,6 +84,7 @@ void makeConnections() {
   //pc
   pc.connectsTo(abus.IN());
   pc.connectsTo(abus.OUT());
+  pc.connectsTo(mem.READ());
 
   //ir
   ir.connectsTo(mem.READ());
