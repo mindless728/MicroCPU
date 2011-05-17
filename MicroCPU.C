@@ -18,6 +18,7 @@ void AM( list<string>& trace );
 byte AMmodify(byte inst, byte ai);
 void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback );
 string get_inst_mnemonic( byte inst );
+string resolve_address_modes( uint32 inst );
 
 char t;
 
@@ -303,8 +304,9 @@ byte AMmodify(byte inst, byte ai) {
  */
 void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback ) {
     string inst_string = get_inst_mnemonic( (byte)(inst >> 24) );
+    string am_string = resolve_address_modes( inst );
 
-    cout << inst << ": " << inst_string;
+    cout << endl << inst << ": " << inst_string << " " << am_string;
     if( !writeback.empty() ) {
         cout << writeback.back();
     }
@@ -455,9 +457,67 @@ string get_inst_mnemonic( byte inst ) {
 }
 
 string resolve_address_modes( uint32 inst ) {
-    byte am0 = (( inst >> 16) & 0xFF);
-    byte am1 = ((inst >> 8) & 0xFF);
-    byte am2 = (inst & 0xFF);
-    
-    return "";
+    byte opc = (inst >> 24);
+    int am[3] = { (( inst >> 16) & 0xFF), ((inst >> 8) & 0xFF), (inst & 0xFF) };
+
+    int category = (opc >> 5);
+    int offset = opc & 0x1F;
+    int operands = 0;
+    switch( category ) {
+        case 0: // math instruction
+            operands = 2;
+            break;
+        case 1: // jump instruction
+            if( offset == 0 ) {
+                operands = 1;
+            } else {
+                operands = 3;
+            }
+            break;
+        case 2: // dataflow instructions
+            if( offset == 0 ) {
+                operands = 2;
+            } else {
+                operands = 1;
+            }
+            break;
+    }
+    stringstream ret;
+    for( int i = 0; i < operands; ++i ) {
+        if( am[i] ) {
+            if( i != 0 ) {
+                ret << ", ";
+            }
+            int addr_mode = (am[i] >> 4); // the upper four bits
+            int operand = (am[i] & 0xF); // the lower four bits
+            switch( addr_mode ) {
+                case 8: // register
+                    ret << "R" << operand;
+                    break;
+                case 9: // register indirect
+                    ret << "MEM[R" << operand << "]";
+                    break;
+                case 10: // memory indirect
+                    ret << "MEM[MEM[R" << operand << "]]";
+                    break;
+                case 11: // indexed
+                    ret << "MEM[R" << operand << "+IND]";
+                    break;
+                case 12: // indexed indirect
+                    ret << "MEM[MEM[R" << operand << "+IND]]";
+                    break;
+                case 13: // indexed memory indirect
+                    ret << "MEM[MEM[R" << operand << "]+IND]";
+                    break;
+                case 14: // double indexed
+                    ret << "MEM[MEM[R" << operand << "+IND1]+IND2]";
+                default:
+                    ret << "INVALID:(" << addr_mode << "," << operand << ")";
+            }
+        }
+    }
+    if( operands == 2 && category == 0 && am[2] != 0 ) {
+        ret << ", " << am[2];
+    }
+    return ret.str();
 }
