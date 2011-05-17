@@ -152,7 +152,7 @@ string mExecute(byte ai) {
     } else if(value) {
         run = inst[2];
     } else
-        str = "PC <- PC";
+        str = "Branch Not Taken";
 
     //run microcode based on the truth value of comparison
     if(run) {
