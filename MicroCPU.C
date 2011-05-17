@@ -303,7 +303,8 @@ void AM( list<string>& trace ) {
 }
 
 void AM_check(byte inst, byte * am) {
-    
+    if((inst == 0x42) && ((am[0] & 0xF0) != 0x80))
+        throw 2;
 }
 
 byte AMmodify(byte inst, byte ai) {
