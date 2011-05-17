@@ -3,6 +3,21 @@
 
 #include "globals.h"
 
+#define ALU_OP_ADD 0
+#define ALU_OP_OR 1
+#define ALU_OP_AND 2
+#define ALU_OP_XOR 3
+#define ALU_OP_SLL 4
+#define ALU_OP_SRL 5
+#define ALU_OP_SRA 6
+
+#define JMP_OP_L 0
+#define JMP_OP_LE 1
+#define JMP_OP_G 2
+#define JMP_OP_GE 3
+#define JMP_OP_E 4
+#define JMP_OP_NE 5
+
 string AMn_X_RReg_S_AMn(byte inst);   // AMn <- R[Reg] + AMn
 string AMn_X_RReg(byte inst);         // AMn <- R[Reg]
 string AM0_X_AM0_OP_AMn(byte inst);   // AM0 <- AMn OP AM0

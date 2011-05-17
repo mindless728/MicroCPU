@@ -79,35 +79,35 @@ string AM0_X_AM0_OP_AMn(byte inst) {   // AM0 <- AM0 OP AMn
 
     // load the ALU operands
     alu.OP1().pullFrom(amr[0]);
-    alu.OP2().pullFrom(amr[ai]);cout << "HELLO";
+    alu.OP2().pullFrom(amr[ai]);
 
     // perform the ALU operation
     switch(op) {
-        case 0:
+        case ALU_OP_ADD:
             alu.perform(BusALU::op_add);
             ss << " + ";
             break;
-        case 1:
+        case ALU_OP_OR:
             alu.perform(BusALU::op_or);
             ss << " | ";
             break;
-        case 2:
+        case ALU_OP_AND:
             alu.perform(BusALU::op_and);
             ss << " & ";
             break;
-        case 3:
+        case ALU_OP_XOR:
             alu.perform(BusALU::op_xor);
             ss << " ^ ";
             break;
-        case 4:
+        case ALU_OP_SLL:
             alu.perform(BusALU::op_lshift);
             ss << " << ";
             break;
-        case 5:
+        case ALU_OP_SRL:
             alu.perform(BusALU::op_rshift);
             ss << " >> ";
             break;
-        case 6:
+        case ALU_OP_SRA:
             alu.perform(BusALU::op_rashift);
             ss << " >>a ";
             break;
