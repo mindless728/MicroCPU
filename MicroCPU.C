@@ -16,14 +16,14 @@ char t;
 int main(int argc, char ** argv) {
   byte flags;
   cout << hex;
-  CPUObject::debug |= CPUObject::trace;
+    //CPUObject::debug |= CPUObject::trace;
   if( argc < 2 ) {
     cout << "Usage: " << argv[0] << " [OBJ]\n";
   }
 
   try {
     makeConnections();
-    mmem.load("mMemory.obj");
+    mmem.load("mMemory.obj.o");
     mem.load(argv[1]);
   
     gotoFetch();
@@ -38,6 +38,9 @@ int main(int argc, char ** argv) {
   }
 }
 
+/**
+ * starts a fetch in the CPU.
+ */
 void gotoFetch() {
   mpc.clear();
   Clock::tick();
@@ -51,6 +54,9 @@ void gotoFetch() {
   Clock::tick();
 }
 
+/**
+ * Performs a micro instruction fetch.
+ */
 void mFetch() {
   mabus.IN().pullFrom(mpc);
   mmem.MAR().latchFrom(mabus.OUT());
@@ -62,6 +68,11 @@ void mFetch() {
   Clock::tick();
 }
 
+/**
+ * Executes a micro instruction
+ *
+ * @param   ai  The instruction to execute.
+ */
 void mExecute(byte ai) {
   string str = "";
   byte inst[3] = {0};
