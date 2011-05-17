@@ -2,6 +2,11 @@
 #include "includes.h"
 #include "MicroInst.h"
 
+list<string> fetch_strings;
+list<string> decode_strings;
+list<string> execute_strings;
+list<string> writeback_strings;
+ 
 //#define DEBUG
 
 void gotoFetch();
@@ -12,6 +17,7 @@ list<string> writeback();
 void AM( list<string>& trace );
 byte AMmodify(byte inst, byte ai);
 void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback );
+string get_inst_mnemonic( byte inst );
 
 char t;
 
@@ -30,11 +36,7 @@ int main(int argc, char ** argv) {
 
         pc.latchFrom( mem.READ() );
         
-        list<string> fetch_strings;
-        list<string> decode_strings;
-        list<string> execute_strings;
-        list<string> writeback_strings;
-        gotoFetch();
+       gotoFetch();
         while(1) {
             mFetch();
             execute_strings.push_back( mExecute() );
@@ -299,9 +301,8 @@ byte AMmodify(byte inst, byte ai) {
  * @param sideeffects   A more readable version of what occured during the writeback stage.
  */
 void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback ) {
-    string inst_string = "TODO: INSTRUCTION TRANSLATION";
+    string inst_string = get_inst_mnemonic( (byte)(inst >> 24) );
 
-    
     cout << inst << ": " << inst_string;
     if( !writeback.empty() ) {
         cout << writeback.back();
@@ -337,4 +338,125 @@ void trace( const int& inst, const list<string>& fetch, const list<string>& deco
         cout << "  Writeback:" << endl;
         cout << "    " << writeback.front() << endl;
     }
+}
+
+string get_inst_mnemonic( byte inst ) {
+    int category = (inst >> 5); // top 3 bits of the instruction
+    int offset = ( inst & 0x1F ); // lower 5 bits of the instruction
+    string ret;
+    switch( category ) {
+        case 0: // Math/ALU instruction
+            switch( offset ) {
+                case 1: 
+                    ret = "ADD ";
+                    break;
+                case 2: 
+                    ret = "SUB ";
+                    break;
+                case 3:
+                    ret = "NEG ";
+                    break;
+                case 4:
+                    ret = "OR  ";
+                    break;
+                case 5:
+                    ret = "AND ";
+                    break;
+                case 6:
+                    ret = "XOR ";
+                    break;
+                case 7:
+                    ret = "CMP ";
+                    break;
+                case 8:
+                    ret = "SLL ";
+                    break;
+                case 9:
+                    ret = "SRL ";
+                    break;
+                case 10:
+                    ret = "SRA ";
+                    break;
+                case 11:
+                    ret = "INC ";
+                    break;
+                case 12:
+                    ret = "DEC ";
+                    break;
+                default:
+                    ret = "BAD MATH OPCODE ";
+                    break;
+            }
+            break;
+        case 1: // branch/jump instructions
+            switch( offset ) {
+                case 0:
+                    ret = "JMP ";
+                    break;
+                case 1:
+                    ret = "JL ";
+                    break;
+                case 2:
+                    ret = "JLE ";
+                    break;
+                case 3:
+                    ret = "JG ";
+                    break;
+                case 4:
+                    ret = "JGE ";
+                    break;
+                case 5:
+                    ret = "JEQ ";
+                    break;
+                case 6:
+                    ret = "JNE ";
+                    break;
+                case 16:
+                    ret = "JLC ";
+                    break;
+                case 17:
+                    ret = "JLEC ";
+                    break;
+                case 18:
+                    ret = "JGC ";
+                    break;
+                case 19:
+                    ret = "JGEC ";
+                    break;
+                case 20:
+                    ret = "JZ ";
+                    break;
+                case 21:
+                    ret = "JNZ ";
+                    break;
+
+            }
+            break;
+        case 2: // data flow instructions
+            switch( offset ) {
+                case 0:
+                    ret = "MOV ";
+                    break;
+                case 1: 
+                    ret = "PUSH ";
+                    break;
+                case 2:
+                    ret = "POP ";
+                    break;
+                default:
+                    ret = "BAD DATAFLOW OPCODE ";
+            }
+            break;
+        default: //unused
+            ret = "BAD CATEGORY ";
+    }
+    return ret;
+}
+
+string resolve_address_modes( uint32 inst ) {
+    byte am0 = (( inst >> 16) & 0xFF);
+    byte am1 = ((inst >> 8) & 0xFF);
+    byte am2 = (inst & 0xFF);
+    
+    return "";
 }
