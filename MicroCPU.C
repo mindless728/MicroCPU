@@ -471,6 +471,7 @@ string get_inst_mnemonic( byte inst ) {
 }
 
 string resolve_address_modes( uint32 inst ) {
+    // separate out meaningful fields from the instruction
     byte opc = (inst >> 24);
     int am[3] = { (( inst >> 16) & 0xFF), ((inst >> 8) & 0xFF), (inst & 0xFF) };
 
