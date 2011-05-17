@@ -1,3 +1,4 @@
+#include <sstream>
 #include "includes.h"
 #include "MicroInst.h"
 
@@ -37,7 +38,6 @@ int main(int argc, char ** argv) {
             execute_strings.push_back( mExecute() );
             flags = mir.uvalue() >> 24;
             if((flags & 0x7) == 1) {
-                //AM();
                 AM(decode_strings);
                 decode();
             } else if((flags & 0x82) == 2) {
@@ -195,10 +195,16 @@ list<string> writeback() {
         // if we are using a register address mode, we writeback to a register
         if( (amdst & 0xF0) == 0x80 ) {
             trace.push_back( RReg_X_AM0( amdst & 0xF ) );
+            stringstream ss;
+            ss << "  (R[" << (amdst & 0xF) << "] <- " << amr[0].uvalue() << ")";
+            trace.push_back( ss.str() );
             //dbus.IN().pullFrom( amr[0] );
             //r[amdst & 0xF].latchFrom(dbus.OUT());         
         } else {    // otherwise we writeback to memory
             trace.push_back( MEMwrite_X_AMn(0) ); 
+            stringstream ss;
+            ss << "  (MEM[" << mem.MAR().uvalue() << "] <- " << amr[0].uvalue() << ")";
+            trace.push_back( ss.str() );
             //mem.WRITE().pullFrom( amr[0] );
             //mem.write();
         }
