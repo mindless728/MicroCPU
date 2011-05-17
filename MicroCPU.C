@@ -112,7 +112,7 @@ string mExecute(byte ai) {
   if(flags & 0x80) { //processing a jump
     //get the left and right test values
     int left = amr[0].value(),
-           right = (ir.uvalue() & 0x10000000?amr[1].value():0);
+           right = (ir.uvalue() & 0x10000000?0:amr[1].value());
     bool value = false;
     byte run = 0;
 
@@ -151,7 +151,7 @@ string mExecute(byte ai) {
         else
             run = inst[2];
     } else if(value) {
-        run = inst[2];
+        run = inst[1];
     } else
         str = "Branch Not Taken";
 
