@@ -61,9 +61,6 @@ int main(int argc, char ** argv) {
     }
 }
 
-/**
- * starts a fetch in the CPU.
- */
 void gotoFetch() {
     mpc.clear();
     Clock::tick();
@@ -77,9 +74,6 @@ void gotoFetch() {
     Clock::tick();
 }
 
-/**
- * Performs a micro instruction fetch.
- */
 void mFetch() {
     mabus.IN().pullFrom(mpc);
     mmem.MAR().latchFrom(mabus.OUT());
@@ -101,8 +95,10 @@ string mExecute(byte ai) {
     byte inst[3] = {0};
     byte flags = mir.uvalue() >> 24;
     byte func = 0;
+
     for(uint32 i = 0; i < 3; ++i)
         inst[i] = (mir.uvalue() >> (8 * (2 - i))) & 0xFF;
+
   if(flags & 0x80) { //processing a jump
     //get the left and right test values
     uint32 left = amr[0].uvalue(),
