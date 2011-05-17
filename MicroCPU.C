@@ -11,7 +11,7 @@ void decode();
 list<string> writeback();
 void AM( list<string>& trace );
 byte AMmodify(byte inst, byte ai);
-void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback, const string& sideeffects );
+void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback );
 
 char t;
 
@@ -38,6 +38,8 @@ int main(int argc, char ** argv) {
             execute_strings.push_back( mExecute() );
             flags = mir.uvalue() >> 24;
             if((flags & 0x7) == 1) {
+                fetch_strings = execute_strings;
+                execute_strings.clear();
                 AM(decode_strings);
                 decode();
             } else if((flags & 0x82) == 2) {
@@ -48,7 +50,7 @@ int main(int argc, char ** argv) {
                 }
                 cout << endl;
 #endif
-                trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings, string("sideeffects"));
+                trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
                 execute_strings.clear();
                 decode_strings.clear();
                 gotoFetch();
@@ -198,15 +200,11 @@ list<string> writeback() {
             stringstream ss;
             ss << "  (R[" << (amdst & 0xF) << "] <- " << amr[0].uvalue() << ")";
             trace.push_back( ss.str() );
-            //dbus.IN().pullFrom( amr[0] );
-            //r[amdst & 0xF].latchFrom(dbus.OUT());         
         } else {    // otherwise we writeback to memory
             trace.push_back( MEMwrite_X_AMn(0) ); 
             stringstream ss;
             ss << "  (MEM[" << mem.MAR().uvalue() << "] <- " << amr[0].uvalue() << ")";
             trace.push_back( ss.str() );
-            //mem.WRITE().pullFrom( amr[0] );
-            //mem.write();
         }
     } 
     Clock::tick();
@@ -248,7 +246,7 @@ void AM( list<string>& trace ) {
             mFetch();
             trace.push_back( mExecute(i) );
             byte flags = mir.uvalue() >> 24;
-            if((flags & 0x7) == 1) {
+            /*if((flags & 0x7) == 1) {
                 //AM();
                 decode();
             } else if((flags & 0x82) == 2) {
@@ -260,7 +258,7 @@ void AM( list<string>& trace ) {
                 cout << endl;
 #endif
                 gotoFetch();
-            }
+            }*/
         } while(!(mir.uvalue() & 0x08000000));
 
         //shift the maux 8 bits
@@ -297,9 +295,15 @@ byte AMmodify(byte inst, byte ai) {
  * @param writeback Micro-ops from the writeback stage.
  * @param sideeffects   A more readable version of what occured during the writeback stage.
  */
-void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback, const string& sideeffects ) {
+void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback ) {
     string inst_string = "TODO: INSTRUCTION TRANSLATION";
-    cout << inst << ": " << inst_string << endl;
+
+    
+    cout << inst << ": " << inst_string;
+    if( !writeback.empty() ) {
+        cout << writeback.back();
+    }
+    cout << endl;
 
     // print micro instructions for fetch:
     cout << "  Fetch:" << endl;
@@ -325,14 +329,9 @@ void trace( const int& inst, const list<string>& fetch, const list<string>& deco
         ++i;
     }
 
-    // print micro instructions for writeback
-    cout << "  Writeback:" << endl;
-    i = writeback.begin();
-    while( i != writeback.end() ) {
-        cout << "    " << *i << endl;
-        ++i;
+    if( !writeback.empty() ) {
+        // print micro instructions for writeback
+        cout << "  Writeback:" << endl;
+        cout << "    " << writeback.front() << endl;
     }
-
-    // print the sideeffects of the instruction (memory/register changes)
-    cout << "  " << sideeffects << endl;
 }
