@@ -46,8 +46,9 @@ int main(int argc, char ** argv) {
                 execute_strings.clear();
                 AM(decode_strings);
                 decode();
-            } else if((flags & 0x82) == 2) {
-                writeback_strings = writeback();
+            } else if((flags & 0x2) == 2) {
+                if(!(flags & 0x80))
+                    writeback_strings = writeback();
 #ifdef DEBUG
                 for( int i = 0; i < 16; i += 4 ) {
                     cout << endl << r[i] << " " << r[i+1] << " " << r[i+2] << " " << r[i+3];
