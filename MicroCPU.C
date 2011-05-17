@@ -68,7 +68,13 @@ int main(int argc, char ** argv) {
 
     } catch(ArchLibError) {
         cout << "Simulation aborted - ArchLib runtime error" << endl;
-    } catch(int) {
+    } catch(int err_code) {
+        switch( err_code ) {
+            case ERR_HALT:
+                trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
+                cout << "CPU halted successfully!" << endl;
+                break;
+        }
     }
 }
 
@@ -373,9 +379,14 @@ void trace( const int& inst, const list<string>& fetch, const list<string>& deco
     }
 }
 
-string get_inst_mnemonic( byte inst ) {
-    int category = (inst >> 5); // top 3 bits of the instruction
-    int offset = ( inst & 0x1F ); // lower 5 bits of the instruction
+/**
+ * Obtains a meaningful mnemonic for the give opcode
+ *
+ * @param opc The opcode.
+ */
+string get_inst_mnemonic( byte opc ) {
+    int category = (opc >> 5); // top 3 bits of the instruction
+    int offset = ( opc & 0x1F ); // lower 5 bits of the instruction
     string ret;
     switch( category ) {
         case 0: // Math/ALU instruction
@@ -480,13 +491,25 @@ string get_inst_mnemonic( byte inst ) {
                     ret = "BAD DATAFLOW OPCODE ";
             }
             break;
+        case 7: //misc/halt
+            if( offset == 0x1f ) { // halt
+                ret = "HALT";
+            }
+            break;
         default: //unused
             ret = "BAD CATEGORY ";
     }
     return ret;
 }
 
+/**
+ * Resolves the AMs in the given instruction into a string that tells the
+ * user about the instruction's AM operands.
+ *
+ * @param inst The instruction
+ */
 string resolve_address_modes( uint32 inst ) {
+    // separate out meaningful fields from the instruction
     byte opc = (inst >> 24);
     int am[3] = { (( inst >> 16) & 0xFF), ((inst >> 8) & 0xFF), (inst & 0xFF) };
 
@@ -508,16 +531,21 @@ string resolve_address_modes( uint32 inst ) {
             if( offset == 0 ) {
                 operands = 2;
             } else {
-                operands = 1;
+                operands = 2;
             }
             break;
     }
     stringstream ret;
     for( int i = 0; i < operands; ++i ) {
+        // is this AM field populated? If not we definitely don't want to
+        // print it
         if( am[i] ) {
-            if( i != 0 ) {
+            // we only want to print a comma if we are not the first field and 
+            // our previous field is non-zero
+            if( i != 0 && am[i-1] != 0 ) {
                 ret << ", ";
             }
+            // extract out the address mode and the operand of it
             int addr_mode = (am[i] >> 4); // the upper four bits
             int operand = (am[i] & 0xF); // the lower four bits
             switch( addr_mode ) {
@@ -541,12 +569,14 @@ string resolve_address_modes( uint32 inst ) {
                     break;
                 case 14: // double indexed
                     ret << "MEM[MEM[R" << operand << "+IND1]+IND2]";
-                default:
+                default: // an invalid AM
                     ret << "INVALID:(" << addr_mode << "," << operand << ")";
             }
         }
     }
-    if( operands == 2 && category == 0 && am[2] != 0 ) {
+    // we only want to print the immediate if we are using an ALU instruction
+    // and there is some value in the immediate field.
+    if( category == 0 && am[2] != 0 ) {
         ret << ", " << am[2];
     }
     return ret.str();

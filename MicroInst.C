@@ -539,7 +539,7 @@ string RReg_X_AM0(byte inst) {         // R[Reg] <- AM0
  * @return nothing - an exception is thrown.
  */
 string halt(byte inst) {               // halt
-    throw 1;
+    throw ERR_HALT;
     return "halt";
 }
 
