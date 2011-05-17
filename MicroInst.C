@@ -350,6 +350,7 @@ string R15_X_R15_OP_1(byte inst) {     // R15 <- R15 OP 1
         case 0:
             r[15].incr();
             ss << " + ";
+            break;
         case 1:
             r[15].decr();
             ss << " - ";
