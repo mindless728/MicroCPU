@@ -493,14 +493,14 @@ string resolve_address_modes( uint32 inst ) {
             if( offset == 0 ) {
                 operands = 2;
             } else {
-                operands = 1;
+                operands = 2;
             }
             break;
     }
     stringstream ret;
     for( int i = 0; i < operands; ++i ) {
         if( am[i] ) {
-            if( i != 0 ) {
+            if( i != 0 && am[i-1] != 0 ) {
                 ret << ", ";
             }
             int addr_mode = (am[i] >> 4); // the upper four bits
