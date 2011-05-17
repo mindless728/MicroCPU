@@ -248,19 +248,19 @@ void AM( list<string>& trace ) {
             mFetch();
             trace.push_back( mExecute(i) );
             byte flags = mir.uvalue() >> 24;
-            //if((flags & 0x7) == 1) {
-            //    AM();
-            //    decode();
-            //} else if((flags & 0x82) == 2) {
-            //    writeback();
+            if((flags & 0x7) == 1) {
+                //AM();
+                decode();
+            } else if((flags & 0x82) == 2) {
+                writeback();
 #ifdef DEBUG
-            //    for( int j = 0; j < 16; j += 4 ) {
-            //        cout << endl << r[j] << " " << r[j+1] << " " << r[j+2] << " " << r[j+3];
-            //    }
-            //    cout << endl;
+                for( int j = 0; j < 16; j += 4 ) {
+                    cout << endl << r[j] << " " << r[j+1] << " " << r[j+2] << " " << r[j+3];
+                }
+                cout << endl;
 #endif
-            //    gotoFetch();
-            //}
+                gotoFetch();
+            }
         } while(!(mir.uvalue() & 0x08000000));
 
         //shift the maux 8 bits
