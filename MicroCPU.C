@@ -16,12 +16,15 @@ char t;
 int main(int argc, char ** argv) {
   byte flags;
   cout << hex;
-  //CPUObject::debug |= CPUObject::trace;
+  CPUObject::debug |= CPUObject::trace;
+  if( argc < 2 ) {
+    cout << "Usage: " << argv[0] << " [OBJ]\n";
+  }
 
   try {
     makeConnections();
-    mem.load("Memory.obj.o");
-    mmem.load("mMemory.obj.o");
+    mmem.load("mMemory.obj");
+    mem.load(argv[1]);
   
     gotoFetch();
     while(1) {

@@ -5,9 +5,16 @@
 
 void setupMicroInstFunctions();
 
+/**
+ * Constructs a register file with the given name containing count registers
+ * of size bits.
+ *
+ * @param   name    The name of the register file.
+ * @param   bits    The bits per register.
+ * @param   count   The number of registers in the file.
+ */
 RegisterFile::RegisterFile(string name, uint32 bits, uint32 count) : number(count) {
   stringstream * ss;
-
   reg = new Counter*[number];
   for(uint32 i = 0; i < number; ++i) {
     ss = new stringstream();
@@ -17,40 +24,60 @@ RegisterFile::RegisterFile(string name, uint32 bits, uint32 count) : number(coun
   }
 }
 
+/**
+ * Cleanly destructs a register file.
+ */
 RegisterFile::~RegisterFile() {
   for(uint32 i = 0; i < number; ++i)
     delete reg[i];
   delete reg;
 }
 
+/**
+ * Array access operator for accessing specific registers in the file.
+ */
 Counter & RegisterFile::operator [] (uint32 i) {
   return *(reg[i]);
 }
 
+// Number of bits per register
 const uint32 BIT_SIZE(32);
 
+// Program Counter
 Counter pc("PC",BIT_SIZE);
+// Instruction Register
 Counter ir("IR",BIT_SIZE);
+// The 8-bit immediate register
 Counter imm("IMM",8);
+
+// constants used with ALUs
 StorageObject zero("ZERO",BIT_SIZE,0);
 StorageObject eight("EIGHT",BIT_SIZE,8);
 StorageObject mask("0xF0",BIT_SIZE,0xF0);
-RegisterFile r("R",BIT_SIZE,16);
-RegisterFile amr("AMR",BIT_SIZE,4);
 
+// The register files
+RegisterFile r("R",BIT_SIZE,16); // GPR registers
+RegisterFile amr("AMR",BIT_SIZE,4); // AM temporary registers
+
+
+// bus objects
 BusALU alu("ALU",BIT_SIZE);
 Bus abus("ABUS",BIT_SIZE);
 Bus dbus("DBUS",BIT_SIZE);
+
+// main memory
 Memory mem("MEM",BIT_SIZE/2,BIT_SIZE);
 
+// micro control unit components
 Counter mpc("mPC",BIT_SIZE);
 Counter mir("mIR",BIT_SIZE);
-Counter maux("mAUX",BIT_SIZE);
+Counter maux("mAUX",BIT_SIZE);  // auxillary register
 
 BusALU malu("mALU",BIT_SIZE);
 Bus mabus("mABUS",BIT_SIZE);
 Memory mmem("mMEM",BIT_SIZE/2,BIT_SIZE);
 
+// the micro-instruction function pointer look-up table
 MicroInst microInst[NUMBER_MICRO_FUNCTIONS];
 
 void makeConnections() {
@@ -122,6 +149,9 @@ void makeConnections() {
   setupMicroInstFunctions();
 }
 
+/**
+ * Populates the micro instruction function pointer table
+ */
 void setupMicroInstFunctions() {
   microInst[0] = AMn_X_RReg_S_AMn;
   microInst[1] = AMn_X_RReg;  

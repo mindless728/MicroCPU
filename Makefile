@@ -64,10 +64,10 @@ OBJFILES =	 MicroInst.o globals.o
 all:	 MicroCPU Memory.obj.o mMemory.obj.o
 
 Memory.obj.o: Memory.obj
-	cpp Memory.obj > Memory.obj.o
+	cpp -P Memory.obj > Memory.obj.o
 
 mMemory.obj.o: mMemory.obj
-	cpp mMemory.obj > mMemory.obj.o
+	cpp -P mMemory.obj > mMemory.obj.o
 
 MicroCPU:	MicroCPU.o $(OBJFILES)
 	$(CXX) $(CXXFLAGS) -o MicroCPU MicroCPU.o $(OBJFILES) $(CCLIBFLAGS)
