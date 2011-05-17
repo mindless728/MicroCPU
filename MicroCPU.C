@@ -72,6 +72,44 @@ void mExecute(byte ai) {
     inst[i] = (mir.uvalue() >> (8 * (2 - i))) & 0xFF;
 
   if(flags & 0x80) { //processing a jump
+    //get the left and right test values
+    uint32 left = amr[0].uvalue(),
+           right = (ir.uvalue() & 0x10000000?amr[1].uvalue():0);
+    bool value = false;
+
+    //determine if the testing value is tue or not
+    switch(inst[0]) {
+    case JMP_OP_L:
+      if(left < right)
+        value = true;
+      break;
+    case JMP_OP_LE:
+      if(left <= right)
+        value = true;
+      break;
+    case JMP_OP_G:
+      if(left > right)
+        value = true;
+      break;
+    case JMP_OP_GE:
+      if(left >= right)
+        value = true;
+      break;
+    case JMP_OP_E:
+      if(left == right)
+        value = true;
+      break;
+    case JMP_OP_NE:
+      if(left != right)
+        value = true;
+      break;
+    }
+
+    //run microcode based on the truth value of comparison
+    if(inst[2-value]) {
+      func = getMicroFunction(inst[2-value]);
+      str += microInst[func](inst[2-value]);
+    }
   } else if(flags & 0x04) { //processing a adress mode isntruction
     for(uint32 i = 0; i < 3; ++i) {
       if(inst[i] == 0)
