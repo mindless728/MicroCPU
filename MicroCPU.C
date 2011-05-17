@@ -215,7 +215,7 @@ void AM( list<string>& trace ) {
     Clock::tick();
 
     for(uint32 i = 2; i != -1; --i) {
-        if(!(maux.uvalue() & mask.uvalue())) {
+        if(!(maux.uvalue() & 0x80/*mask.uvalue()*/)) {
             //shift the maux 8 bits
             malu.OP1().pullFrom(maux);
             malu.OP2().pullFrom(eight);
