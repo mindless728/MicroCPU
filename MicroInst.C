@@ -79,7 +79,7 @@ string AM0_X_AM0_OP_AMn(byte inst) {   // AM0 <- AM0 OP AMn
 
     // load the ALU operands
     alu.OP1().pullFrom(amr[0]);
-    alu.OP2().pullFrom(amr[ai]);
+    alu.OP2().pullFrom(amr[ai]);cout << "HELLO";
 
     // perform the ALU operation
     switch(op) {

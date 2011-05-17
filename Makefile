@@ -92,6 +92,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 clean:
 	-/bin/rm -r $(OBJFILES) MicroCPU.o ptrepository SunWS_cache .sb ii_files core 2> /dev/null
 	rm *~
+	rm mMemory.obj.o  Memory.obj.o
 
 realclean:        clean
 	/bin/rm -rf  MicroCPU 
