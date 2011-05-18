@@ -14,5 +14,27 @@ Address Modes:
     > No micro-immediate.
     > 00 in an address mode field causes 0 to be loaded.
 
-Micro-instructions:
-    0b11xx
+Micro-instructions (if you care, see MicroInst.C for more on these):
+    11xx yyyy:    AM[x] <- R[y] + AM[x]
+    10xx yyyy:    AM[x] <- R[y]
+    0111 xyyy:    AM0 <- AM0 OP[y] AM[x] (see ISA document for OP indices, same order as ALU instructions)
+    0110 xxxx:    MAR <- R[x]
+    0011 11xx:    AM[x] <- AM2 + AM[x]
+    0011 10xy:    AM[x] < imm OP[y] AM[x] (y=0 is addition, y=1 is subtraction)
+    0011 01xx:    AM[x] <- AM[x] - imm
+    0010 11xx:    MAR <- AM[x]
+    0101 xxxx:    R[x] <- AM[0]
+    0010 10xx:    PC <- AM[x]
+    0010 01xx:    MEMwrite <- AM[x]
+    0010 001x:    R[15] <- R[15] OP[x] 1
+    0001 1111:    MAR <- MEMread
+    0001 1110:    PC <- PC + 1
+    0001 1101:    MAR <- PC
+    0001 1100:    AM0 <- -AM0
+    0001 1011:    AM0 <- ~AM0
+    0001 1010:    AM0 <- AM1
+    0001 1001:    IR <- MEMread
+    0001 1000:    imm <- MEMread
+
+The structure of the CPU has changed slightly. Mainly in the components that we
+added to the MCU to extract address modes out of the instructions.
