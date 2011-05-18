@@ -622,6 +622,7 @@ string resolve_address_modes( uint32 inst ) {
                     break;
                 case 14: // double indexed
                     ret << "MEM[MEM[R" << operand << "+IND1]+IND2]";
+                    break;
                 default: // an invalid AM
                     ret << "INVALID:(" << addr_mode << "," << operand << ")";
             }
