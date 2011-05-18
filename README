@@ -20,3 +20,9 @@ IllegalOpcode.obj:
     A generic illegal opcode.
 Fibonacci.obj
     Obtains the nth fibbonacci number in register 3. (sequence starts with the 1st fibonacci number being the second 1, 2nd being 2, etc.)
+        > tests looping
+        > tests conditional jumps
+        > tests move
+    To change n modify the first word of memory.
+Binary_Search.obj
+    A binary search. If it finds the element it will perform a MOV R2, R2 at the end of execution to notify the user.
