@@ -137,7 +137,10 @@ int main(int argc, char ** argv) {
         switch( err_code ) {
             case ERR_HALT:
                 trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
-                cout << "CPU halted successfully!" << endl;
+                cout << "    CPU halted successfully!" << endl;
+                break;
+            case ERR_INVALID_AM:
+                cout << "\n****ERROR: INVALID ADDRESS MODE****\n";
                 break;
             case ERR_INVALID_OPCODE:
                 cout << "ERROR: Invalid opcode (" << (ir.uvalue() >> 24) << " at " << prev_pc << ")\n";
@@ -382,6 +385,9 @@ void AM( list<string>& trace ) {
 void AM_check(byte inst, byte * am) {
     if((inst == 0x42) && ((am[0] & 0xF0) != 0x80))
         throw ERR_INVALID_AM;
+    for(uint32 i = 0; i < 3; ++i)
+        if((am[i] & 0xF0) == 0xF0)
+            throw ERR_INVALID_AM;
 }
 
 byte AMmodify(byte inst, byte ai) {
