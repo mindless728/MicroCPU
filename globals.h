@@ -5,7 +5,7 @@
 
 #define ERR_HALT            0
 #define ERR_INVALID_AM      1
-#define ERR_ILLEGAL_OPCODE  2
+#define ERR_INVALID_OPCODE  2
 
 // convenient typedefs
 typedef unsigned char byte;
