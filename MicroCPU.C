@@ -72,7 +72,10 @@ int main(int argc, char ** argv) {
         switch( err_code ) {
             case ERR_HALT:
                 trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
-                cout << "CPU halted successfully!" << endl;
+                cout << "    CPU halted successfully!" << endl;
+                break;
+            case ERR_INVALID_AM:
+                cout << "\n****ERROR: INVALID ADDRESS MODE****\n";
                 break;
         }
     }
