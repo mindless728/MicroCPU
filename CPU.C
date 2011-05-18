@@ -1,3 +1,12 @@
+/**
+ * File: CPU.C
+ *
+ * Authors: Benjamin David Mayes <bdm8233@rit.edu>
+ *          Colin Alexander Barr <colin.a.barr@gmail.com>
+ *
+ * Description: The file containing the code that controls execution of the CPU.
+ */
+
 #include <sstream>
 #include <iomanip>
 #include "includes.h"
@@ -77,7 +86,7 @@ int main(int argc, char ** argv) {
                         }
                         break;
                     case 1:
-                        if( !(offset >=0 && offset <= 5) && !(offset >= 16 && offset <= 21) ) {
+                        if( !(offset >=0 && offset <= 6) && !(offset >= 16 && offset <= 21) ) {
                             // the first 6 jumps are offsetted by [0,5], the second 6 is [16,21]
                             throw ERR_INVALID_OPCODE;
                         }
@@ -121,6 +130,10 @@ int main(int argc, char ** argv) {
     } catch(ArchLibError) {
         cout << "Simulation aborted - ArchLib runtime error" << endl;
     } catch(int err_code) {
+
+        if( !verbose ) {
+            cout << endl;
+        }
         switch( err_code ) {
             case ERR_HALT:
                 trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
@@ -130,7 +143,7 @@ int main(int argc, char ** argv) {
                 cout << "\n****ERROR: INVALID ADDRESS MODE****\n";
                 break;
             case ERR_INVALID_OPCODE:
-                cout << "ERROR: Invalid opcode (" << (ir.uvalue() >> 24) << ")\n";
+                cout << "ERROR: Invalid opcode (" << (ir.uvalue() >> 24) << " at " << prev_pc << ")\n";
         }
     }
 }

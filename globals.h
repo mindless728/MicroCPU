@@ -1,8 +1,21 @@
+/**
+ * File: globals.h
+ *
+ * Authors: Benjamin David Mayes <bdm8233@rit.edu>
+ *          Colin Alexander Barr <colin.a.barr@gmail.com>
+ *
+ * Description: The file containing declarations needed for successful execution
+ * of the CPU.
+ */
+
+
+
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
 #include "includes.h"
 
+// Throwable integer error codes
 #define ERR_HALT            0
 #define ERR_INVALID_AM      1
 #define ERR_INVALID_OPCODE  2

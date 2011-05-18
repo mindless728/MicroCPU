@@ -16,4 +16,5 @@ inc.obj:
     Tests pushing to the stack. Loops until the jump is overwritten by ff000000 being pushed to the stack in the location of the jump.
 IllegalOpcode.obj:
     A generic illegal opcode.
-
+Fibonacci.obj
+    Obtains the nth fibbonacci number in register 3. (sequence starts with the 1st fibonacci number being the second 1, 2nd being 2, etc.)
