@@ -50,7 +50,7 @@ CCLIBFLAGS = $(LIBFLAGS)
 ########## End of flags from header.mak
 
 
-CPP_FILES =	 MicroCPU.C MicroInst.C globals.C
+CPP_FILES =	 CPU.C MicroInst.C globals.C
 C_FILES =	
 H_FILES =	 MicroInst.h globals.h includes.h
 SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES)
@@ -61,7 +61,7 @@ OBJFILES =	 MicroInst.o globals.o
 # Main targets
 #
 
-all:	 MicroCPU Memory.obj.o mMemory.obj.o
+all:	 CPU Memory.obj.o mMemory.obj.o
 
 Memory.obj.o: Memory.obj
 	cpp -P Memory.obj > Memory.obj.o
@@ -69,14 +69,14 @@ Memory.obj.o: Memory.obj
 mMemory.obj.o: mMemory.obj
 	cpp -P mMemory.obj > mMemory.obj.o
 
-MicroCPU:	MicroCPU.o $(OBJFILES)
-	$(CXX) $(CXXFLAGS) -o MicroCPU MicroCPU.o $(OBJFILES) $(CCLIBFLAGS)
+CPU:	CPU.o $(OBJFILES)
+	$(CXX) $(CXXFLAGS) -o CPU CPU.o $(OBJFILES) $(CCLIBFLAGS)
 
 #
 # Dependencies
 #
 
-MicroCPU.o:	 MicroInst.h globals.h includes.h
+CPU.o:	 MicroInst.h globals.h includes.h
 MicroInst.o:	 MicroInst.h globals.h includes.h
 globals.o:	 MicroInst.h globals.h includes.h
 
@@ -90,9 +90,9 @@ archive.tgz:	$(SOURCEFILES) Makefile
 	tar cf - $(SOURCEFILES) Makefile | gzip > archive.tgz
 
 clean:
-	-/bin/rm -r $(OBJFILES) MicroCPU.o ptrepository SunWS_cache .sb ii_files core 2> /dev/null
+	-/bin/rm -r $(OBJFILES) CPU.o ptrepository SunWS_cache .sb ii_files core 2> /dev/null
 	rm *~
 	rm mMemory.obj.o  Memory.obj.o
 
 realclean:        clean
-	/bin/rm -rf  MicroCPU 
+	/bin/rm -rf  CPU 

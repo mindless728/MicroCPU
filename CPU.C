@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iomanip>
 #include "includes.h"
 #include "MicroInst.h"
 
@@ -6,9 +7,12 @@ list<string> fetch_strings;
 list<string> decode_strings;
 list<string> execute_strings;
 list<string> writeback_strings;
+int verbose = 1;
+int prev_pc;
  
 //#define DEBUG
 
+// prototypes
 void gotoFetch();
 void mFetch();
 string mExecute(byte ai = 0);
@@ -23,20 +27,33 @@ void AM_check(byte inst, byte * am);
 
 char t;
 
+/**
+ * Runs the program.
+ */
 int main(int argc, char ** argv) {
     byte flags;
     cout << hex;
+    cout << setfill('0');
     //CPUObject::debug |= CPUObject::trace;
     if( argc < 2 ) {
-        cout << "Usage: " << argv[0] << " [OBJ]\n";
+        cout << "Usage: " << argv[0] << "(-b) [OBJ]\n";
+        return 0;
     }
 
     try {
         makeConnections();
         mmem.load("mMemory.obj.o");
-        mem.load(argv[1]);
+        if( argc == 2 ) {
+            mem.load(argv[1]);
+        } else {
+            mem.load(argv[2]);
+            if( string(argv[1]) == "-b" ) {
+               verbose = 0; 
+            }
+        }
 
         pc.latchFrom( mem.READ() );
+        prev_pc = pc.uvalue();
         
        gotoFetch();
         while(1) {
@@ -119,6 +136,7 @@ int main(int argc, char ** argv) {
 }
 
 void gotoFetch() {
+    prev_pc = pc.uvalue();
     mpc.clear();
     Clock::tick();
 
@@ -385,40 +403,42 @@ void trace( const int& inst, const list<string>& fetch, const list<string>& deco
     string inst_string = get_inst_mnemonic( (byte)(inst >> 24) );
     string am_string = resolve_address_modes( inst );
 
-    cout << endl << inst << ": " << inst_string << " " << am_string;
+    cout << endl << setw(4) << prev_pc << ":" << setw(8) << inst << ": " << inst_string << " " << am_string;
     if( !writeback.empty() ) {
         cout << writeback.back();
     }
-    cout << endl;
 
-    // print micro instructions for fetch:
-    cout << "  Fetch:" << endl;
-    list<string>::const_iterator i = fetch.begin();
-    while( i != fetch.end() ) {
-        cout << "    " << *i << endl;
-        ++i;
-    }
+    if( verbose ) {
+        cout << endl;
+        // print micro instructions for fetch:
+        cout << "  Fetch:" << endl;
+        list<string>::const_iterator i = fetch.begin();
+        while( i != fetch.end() ) {
+            cout << "    " << *i << endl;
+            ++i;
+        }
 
-    // print micro instructions for decode + AMs:
-    cout << "  Decode:" << endl;
-    i = decode.begin();
-    while( i != decode.end() ) {
-        cout << "    " << *i << endl;
-        ++i;
-    }
+        // print micro instructions for decode + AMs:
+        cout << "  Decode:" << endl;
+        i = decode.begin();
+        while( i != decode.end() ) {
+            cout << "    " << *i << endl;
+            ++i;
+        }
 
-    // print micro instructions for execution:
-    cout << "  Execute:" << endl;
-    i = execute.begin();
-    while( i != execute.end() ) {
-        cout << "    " << *i << endl;
-        ++i;
-    }
+        // print micro instructions for execution:
+        cout << "  Execute:" << endl;
+        i = execute.begin();
+        while( i != execute.end() ) {
+            cout << "    " << *i << endl;
+            ++i;
+        }
 
-    if( !writeback.empty() ) {
-        // print micro instructions for writeback
-        cout << "  Writeback:" << endl;
-        cout << "    " << writeback.front() << endl;
+        if( !writeback.empty() ) {
+            // print micro instructions for writeback
+            cout << "  Writeback:" << endl;
+            cout << "    " << writeback.front() << endl;
+        }
     }
 }
 
@@ -565,17 +585,13 @@ string resolve_address_modes( uint32 inst ) {
             break;
         case 1: // jump instruction
             if( offset == 0 ) {
-                operands = 1;
+                operands = 1; // unconditional jump
             } else {
                 operands = 3;
             }
             break;
         case 2: // dataflow instructions
-            if( offset == 0 ) {
-                operands = 2;
-            } else {
-                operands = 2;
-            }
+            operands = 2; // we want to use 2 operands for all the instructions
             break;
     }
     stringstream ret;
@@ -612,6 +628,7 @@ string resolve_address_modes( uint32 inst ) {
                     break;
                 case 14: // double indexed
                     ret << "MEM[MEM[R" << operand << "+IND1]+IND2]";
+                    break;
                 default: // an invalid AM
                     ret << "INVALID:(" << addr_mode << "," << operand << ")";
             }
