@@ -37,4 +37,5 @@ Micro-instructions (if you care, see MicroInst.C for more on these):
     0001 1000:    imm <- MEMread
 
 The structure of the CPU has changed slightly. Mainly in the components that we
-added to the MCU to extract address modes out of the instructions.
+added to the MCU to extract address modes out of the instructions to get it into
+the mIR.

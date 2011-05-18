@@ -130,6 +130,10 @@ int main(int argc, char ** argv) {
     } catch(ArchLibError) {
         cout << "Simulation aborted - ArchLib runtime error" << endl;
     } catch(int err_code) {
+
+        if( !verbose ) {
+            cout << endl;
+        }
         switch( err_code ) {
             case ERR_HALT:
                 trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
