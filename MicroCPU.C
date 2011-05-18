@@ -19,6 +19,7 @@ byte AMmodify(byte inst, byte ai);
 void trace( const int& inst, const list<string>& fetch, const list<string>& decode, const list<string>& execute, const list<string>& writeback );
 string get_inst_mnemonic( byte inst );
 string resolve_address_modes( uint32 inst );
+void AM_check(byte inst, byte * am);
 
 char t;
 
@@ -276,11 +277,21 @@ list<string> writeback() {
 }
 
 void AM( list<string>& trace ) {
+    byte am[] = {0,0,0};
+    byte inst = 0;
     //setup maux to have ir infor for temp uses
     malu.OP1().pullFrom(ir);
     malu.perform(BusALU::op_rop1);
     maux.latchFrom(malu.OUT());
+    amr.clear();
     Clock::tick();
+
+    //check to see if the address modes are valid
+    inst = ir.uvalue() >> 24;
+    am[0] = (ir.uvalue() >> 16) & 0xff;
+    am[1] = (ir.uvalue() >> 8) & 0xff;
+    am[2] = ir.uvalue() & 0xff;
+    AM_check(inst, am);
 
     for(uint32 i = 2; i != -1; --i) {
         if(!(maux.uvalue() & 0x80/*mask.uvalue()*/)) {
@@ -332,6 +343,11 @@ void AM( list<string>& trace ) {
         maux.latchFrom(malu.OUT());
         Clock::tick();
     }
+}
+
+void AM_check(byte inst, byte * am) {
+    if((inst == 0x42) && ((am[0] & 0xF0) != 0x80))
+        throw ERR_INVALID_AM;
 }
 
 byte AMmodify(byte inst, byte ai) {

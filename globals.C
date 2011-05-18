@@ -40,6 +40,14 @@ Counter & RegisterFile::operator [] (uint32 i) {
   return *(reg[i]);
 }
 
+/**
+ * Clears all of the associated registers
+ */
+void RegisterFile::clear() {
+  for(uint32 i = 0; i < number; ++i)
+    reg[i]->clear();
+}
+
 // Number of bits per register
 const uint32 BIT_SIZE(32);
 

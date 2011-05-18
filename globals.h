@@ -23,6 +23,7 @@ public:
   RegisterFile(string name, uint32 bits, uint32 count);
   ~RegisterFile();
   Counter & operator [] (uint32 i);
+  void clear();
 };
 
 
