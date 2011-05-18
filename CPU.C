@@ -1,3 +1,12 @@
+/**
+ * File: CPU.C
+ *
+ * Authors: Benjamin David Mayes <bdm8233@rit.edu>
+ *          Colin Alexander Barr <colin.a.barr@gmail.com>
+ *
+ * Description: The file containing the code that controls execution of the CPU.
+ */
+
 #include <sstream>
 #include <iomanip>
 #include "includes.h"

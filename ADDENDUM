@@ -1,0 +1,18 @@
+Instructions:
+    > We had to add a HALT instruction. It is opcode ff.
+    > All ALU/Math instructions had to be moved up by one (add starts at 1, 
+      subtract is at 2, etc.)
+    > The ISA document contains some incorrect obcodes because we did not 
+      number them correctly.
+        > The relative ordering of the instructions did not change, the 
+          instructions were numbered according to appearance order on the 
+          ISA document
+    > Pop instructions can only pop to registers due to simplicity.
+        > Who would pop to memory anyway?
+
+Address Modes:
+    > No micro-immediate.
+    > 00 in an address mode field causes 0 to be loaded.
+
+Micro-instructions:
+    0b11xx

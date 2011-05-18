@@ -1,8 +1,18 @@
+/**
+ * File: MicroInst.h
+ *
+ * Authors: Benjamin David Mayes <bdm8233@rit.edu>
+ *          Colin Alexander Barr <colin.a.barr@gmail.com>
+ *
+ * Description: Declarations for micro-instruction functions.
+ */
+
 #ifndef MICROINST_H
 #define MICROINST_H
 
 #include "globals.h"
 
+// ALU operations
 #define ALU_OP_ADD 0
 #define ALU_OP_OR 1
 #define ALU_OP_AND 2
@@ -11,6 +21,7 @@
 #define ALU_OP_SRL 5
 #define ALU_OP_SRA 6
 
+// Jump operations
 #define JMP_OP_L 0
 #define JMP_OP_LE 1
 #define JMP_OP_G 2

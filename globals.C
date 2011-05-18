@@ -1,3 +1,12 @@
+/**
+ * File: globals.C
+ *
+ * Authors: Benjamin David Mayes <bdm8233@rit.edu>
+ *          Colin Alexander Barr <colin.a.barr@gmail.com>
+ *
+ * Description: Contains global definitions necessary for the successful execution of the CPU.
+ */
+
 #include "globals.h"
 #include "MicroInst.h"
 

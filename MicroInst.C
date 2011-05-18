@@ -1,3 +1,12 @@
+/**
+ * File: MicroInst.h
+ *
+ * Authors: Benjamin David Mayes <bdm8233@rit.edu>
+ *          Colin Alexander Barr <colin.a.barr@gmail.com>
+ *
+ * Description: Declarations for micro-instruction functions.
+ */
+
 #include "MicroInst.h"
 #include "globals.h"
 
