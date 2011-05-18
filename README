@@ -26,3 +26,9 @@ Fibonacci.obj
     To change n modify the first word of memory.
 Binary_Search.obj
     A binary search. If it finds the element it will perform a MOV R2, R2 at the end of execution to notify the user.
+AM_Test.obj
+    Tests all of the address modes via jumping to the next instruction
+Mul_Test.obj
+    multiplies 2048*512 using a for loop (over 2048) of addition of 512
+Push_Pop_Test.obj
+    tests settign up stack pointer (R15), pushing a register, clearing it, and poping it to confirm it works
