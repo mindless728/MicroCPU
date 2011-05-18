@@ -1,3 +1,5 @@
+Authors: Benjamin Mayes, Colin Barr
+
 To generate the preprocessed micro-memory run the following command:
     cpp -P mMemory.obj > mMemory.o
 

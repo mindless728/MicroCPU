@@ -376,6 +376,9 @@ void AM( list<string>& trace ) {
     }
 }
 
+/**
+ * Assures the given am is valid for the instruction
+ */
 void AM_check(byte inst, byte * am) {
     if((inst == 0x42) && ((am[0] & 0xF0) != 0x80))
         throw ERR_INVALID_AM;
@@ -637,7 +640,8 @@ string resolve_address_modes( uint32 inst ) {
                     ret << "MEM[MEM[R" << operand << "+IND1]+IND2]";
                     break;
                 default: // an invalid AM
-                    ret << "INVALID:(" << addr_mode << "," << operand << ")";
+                    //ret << "INVALID:(" << addr_mode << "," << operand << ")";
+                    ret << 0;
             }
         }
     }

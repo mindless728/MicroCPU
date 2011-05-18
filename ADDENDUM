@@ -2,7 +2,7 @@ Instructions:
     > We had to add a HALT instruction. It is opcode ff.
     > All ALU/Math instructions had to be moved up by one (add starts at 1, 
       subtract is at 2, etc.)
-    > The ISA document contains some incorrect obcodes because we did not 
+    > The ISA document contains some incorrect opcodes because we did not 
       number them correctly.
         > The relative ordering of the instructions did not change, the 
           instructions were numbered according to appearance order on the 
@@ -12,7 +12,7 @@ Instructions:
 
 Address Modes:
     > No micro-immediate.
-    > 00 in an address mode field causes 0 to be loaded.
+    > Invalid address modes (as opposted to illegal ones in pop) will resolve to 0.
 
 Micro-instructions (if you care, see MicroInst.C for more on these):
     11xx yyyy:    AM[x] <- R[y] + AM[x]
@@ -39,3 +39,7 @@ Micro-instructions (if you care, see MicroInst.C for more on these):
 The structure of the CPU has changed slightly. Mainly in the components that we
 added to the MCU to extract address modes out of the instructions to get it into
 the mIR.
+
+We decided on a mIR with 3 8-bit fields and the upper 8 bits to have some 
+control information used in jumps and AM resolution. The specifics of these
+do not matter much in the grand scheme of things however.
