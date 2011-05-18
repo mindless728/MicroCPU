@@ -43,8 +43,43 @@ int main(int argc, char ** argv) {
             execute_strings.push_back( mExecute() );
             flags = mir.uvalue() >> 24;
             if((flags & 0x7) == 1) {
+                // fetch is over, let's move the strings into their own list
                 fetch_strings = execute_strings;
                 execute_strings.clear();
+                
+                // we want to see if the IR contains a valid opcode
+                uint32 opc (ir.uvalue() >> 24);
+                uint32 category = (opc >> 5);
+                uint32 offset = (opc & 0x1F);
+                switch( category ) {
+                    case 0:
+                        if( offset < 1 || offset > 12 ) {
+                            // first instruction is add with an offset of 1, last instruction is decrement with an offset of 12
+                            throw ERR_INVALID_OPCODE;
+                        }
+                        break;
+                    case 1:
+                        if( !(offset >=0 && offset <= 5) && !(offset >= 16 && offset <= 21) ) {
+                            // the first 6 jumps are offsetted by [0,5], the second 6 is [16,21]
+                            throw ERR_INVALID_OPCODE;
+                        }
+                        break;
+                    case 2: 
+                        if( offset > 3 ) {
+                            // we only have 3 data flow instructions
+                            throw ERR_INVALID_OPCODE;
+                        }
+                        break;
+                    case 7:
+                        if( offset != 0x1f ) {
+                            // halt is the only valid misc. instruction
+                            throw ERR_INVALID_OPCODE;
+                        }
+                        break;
+                    default:
+                        // all other instructions are invalid
+                        throw ERR_INVALID_OPCODE;
+                }
                 AM(decode_strings);
                 decode();
             } else if((flags & 0x2) == 2) {
@@ -73,6 +108,8 @@ int main(int argc, char ** argv) {
                 trace( ir.value(), fetch_strings, decode_strings, execute_strings, writeback_strings );
                 cout << "CPU halted successfully!" << endl;
                 break;
+            case ERR_INVALID_OPCODE:
+                cout << "ERROR: Invalid opcode (" << (ir.uvalue() >> 24) << ")\n";
         }
     }
 }
