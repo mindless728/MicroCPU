@@ -86,7 +86,7 @@ int main(int argc, char ** argv) {
                         }
                         break;
                     case 1:
-                        if( !(offset >=0 && offset <= 5) && !(offset >= 16 && offset <= 21) ) {
+                        if( !(offset >=0 && offset <= 6) && !(offset >= 16 && offset <= 21) ) {
                             // the first 6 jumps are offsetted by [0,5], the second 6 is [16,21]
                             throw ERR_INVALID_OPCODE;
                         }
@@ -136,7 +136,7 @@ int main(int argc, char ** argv) {
                 cout << "CPU halted successfully!" << endl;
                 break;
             case ERR_INVALID_OPCODE:
-                cout << "ERROR: Invalid opcode (" << (ir.uvalue() >> 24) << ")\n";
+                cout << "ERROR: Invalid opcode (" << (ir.uvalue() >> 24) << " at " << prev_pc << ")\n";
         }
     }
 }
